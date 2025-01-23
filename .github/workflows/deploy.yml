@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main  
+env:
+      ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      ECR_REPOSITORY: usecase-10-ecr
+      IMAGE_TAG: ${{ github.sha }}
+      AWS_REGION: ap-south-1
 
 jobs:
   build-and-deploy:
@@ -40,11 +45,7 @@ jobs:
         version: 'v1.21.0'  
 
     - name: Update Kubernetes deployment (coredns)
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: usecase-10-ecr
-        IMAGE_TAG: ${{ github.sha }}
-        AWS_REGION: ap-south-1
+
       run: |
         kubectl set image deployment/coredns coredns=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
